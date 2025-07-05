@@ -2,18 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Stock Predictions</title>
+  <title>Indica - Stock Predictions</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+    }
+    .project-title {
+      font-family: 'Noto Sans', sans-serif;
+      font-weight: 600;
+      color: #2c3e50;
+      font-style: italic;
+      font-size: 3.5rem;
+    }
+    .project-subtitle {
+      font-family: 'Noto Sans', sans-serif;
+      font-weight: 300;
+      color: #7f8c8d;
+      font-size: 1.1rem;
+      margin-top: -10px;
+    }
+  </style>
 </head>
 <body class="bg-light">
 
   <div class="container my-4">
-    <h2 class="text-center mb-4">Indian Stock Predictions</h2>
+    <h2 class="text-center mb-1 project-title">Indica</h2>
+    <hr class="mx-auto" style="width: 200px; border: 1px solid #2c3e50; opacity: 0.3;">
+    <p class="text-center project-subtitle">AI-Powered Indian Stock Market Analysis</p>
 
-    <div class="text-center mb-4">
+    <div class="text-center mb-5 mt-5">
       <button id="fetchBtn" class="btn btn-primary">Fetch Predictions</button>
     </div>
 
