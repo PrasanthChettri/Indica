@@ -70,4 +70,3 @@ for post in posts:
 
 # --- Aggregate summary ---
 print("\n📊 Sentiment Summary:")
-print(stock_sentiments)

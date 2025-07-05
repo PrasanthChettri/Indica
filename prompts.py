@@ -2,11 +2,12 @@ from langchain.prompts import PromptTemplate
 
 
 AGGREGATE_PROMPT = PromptTemplate(
-    input_variables=["ticker", "history", "macd_data", "rsi_data", "news_data", "fundamental_indicators", "broad_market_indicators"],
+    input_variables=["ticker", "history", "macd_data", "rsi_data", "news_data", "fundamental_indicators", "broad_market_indicators", "current_date"],
     template="""
 Context: You are a long term retail investor from India investing in stocks with good fundamentals and growth, you are trying to analyze this stock.
 Q: Given the 7-day price history and recent news for the stock {ticker} below, analyze the trend and predict if the stock will likely go up or down tomorrow.
 
+Current Date: {current_date}
 Broad market indicators for Indian Stock Market:
 {broad_market_indicators}
 

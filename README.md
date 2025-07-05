@@ -1,6 +1,8 @@
 INDICA - AI-POWERED INDIAN STOCK MARKET ANALYSIS SYSTEM
 ========================================================
 
+![Webapp Screenshot](assets/APP_SCREENSHOT.png)
+
 PROJECT OVERVIEW
 ----------------
 Indica is a comprehensive AI-driven stock analysis platform that combines technical indicators, fundamental analysis, and real-time news sentiment to provide intelligent stock predictions for Indian markets. The system leverages multiple AI models and data sources to deliver actionable investment insights.

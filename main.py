@@ -1,3 +1,4 @@
+import datetime
 from dotenv import load_dotenv, find_dotenv
 from ohvc import get_stock_analysis
 import prompts
@@ -11,7 +12,7 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from prettytable import PrettyTable
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
@@ -20,7 +21,8 @@ import json
 import pandas as pd
 from news import get_announcements
 from gemini import Gemini
-
+from stubs import get_stub_predictions, get_stub_error_response, get_stub_loading_response
+import time
 
 # Load the model (Gemini via LangChain)
 
@@ -44,7 +46,8 @@ async def predict_stock(name, ticker):
         "rsi_data": ohvc["rsi_data"], 
         "news_data": news_data,
         "fundamental_indicators": ohvc["fundamental_indicators"],
-        "broad_market_indicators": ohvc["broad_market_indicators"]
+        "broad_market_indicators": ohvc["broad_market_indicators"],
+        "current_date": datetime.datetime.now().strftime("%Y-%m-%d")
     }))
     return {
         "stock_name": name,
@@ -66,18 +69,12 @@ app.add_middleware(
 
 # List of Indian stocks with their NSE tickers
 stocks = {
-    "Tata Motors": "TATAMOTORS.NS",
-    "IRCTC": "IRCTC.NS",
-    "Bharat Electronics": "BEL.NS",
-    "JIO Finance Serv.": "JIOFIN.NS",
-    "Vodafone Idea": "IDEA.NS",
-    #"Indian Hotels": "INDHOTEL.NS"
+    "Tata Motors": "TATAMOTORS.NS"
 }
 
 
 @app.get("/predictions")
 async def get_predictions():
-    sentiment_counts = {"buy": 0, "hold": 0, "sell": 0}
     tasks = [predict_stock(name, ticker) for name, ticker in stocks.items()]
     results = await asyncio.gather(*tasks)
     
@@ -85,7 +82,19 @@ async def get_predictions():
         "predictions": results 
     })
 
+@app.get("/predictions/stub")
+async def get_predictions_stub():
+    """
+    Stub API endpoint for testing predictions without requiring AI models or external APIs.
+    Returns mock data that mimics the structure of real predictions.
+    """
+    #sumulate processing time with three second delay
+    time.sleep(3)
+    return JSONResponse(content=get_stub_predictions())
 
+@app.get("/")
+async def get_index():
+    return FileResponse("templates/index.html")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

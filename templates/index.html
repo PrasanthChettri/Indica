@@ -26,17 +26,63 @@
       font-size: 1.1rem;
       margin-top: -10px;
     }
+    .custom-table {
+      width: 100%;
+      max-width: 100%;
+      font-size: 0.85rem;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid #dee2e6;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      table-layout: fixed;
+    }
+    .custom-table th,
+    .custom-table td {
+      padding: 0.75rem;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .custom-table th {
+      background-color: #f8f9fa;
+      font-weight: 500;
+      color: #2c3e50;
+    }
+    .custom-table tr:last-child td {
+      border-bottom: none;
+    }
+    .custom-table th:nth-child(1),
+    .custom-table td:nth-child(1) {
+      width: 15%;
+    }
+    .custom-table th:nth-child(2),
+    .custom-table td:nth-child(2) {
+      width: 10%;
+    }
+    .custom-table details summary {
+      cursor: pointer;
+      color: #2980b9;
+    }
+    .custom-table details summary:hover {
+      text-decoration: underline;
+    }
+    .custom-table tbody tr:hover {
+      background-color: #fafafa;
+    }
   </style>
 </head>
 <body class="bg-light">
 
-  <div class="container my-4">
+  <div class="container my-4" style="max-width: 95%;">
     <h2 class="text-center mb-1 project-title">Indica</h2>
     <hr class="mx-auto" style="width: 200px; border: 1px solid #2c3e50; opacity: 0.3;">
     <p class="text-center project-subtitle">AI-Powered Indian Stock Market Analysis</p>
 
     <div class="text-center mb-5 mt-5">
-      <button id="fetchBtn" class="btn btn-primary">Fetch Predictions</button>
+      <button id="fetchBtn" class="btn btn-outline-dark">Fetch Predictions</button>
     </div>
 
     <div id="predictionTableContainer"></div>
@@ -47,12 +93,12 @@
       $('#fetchBtn').click(function () {
         $('#fetchBtn').prop('disabled', true).text("Loading...");
 
-        $.getJSON("http://localhost:8000/predictions", function (data) {
+        $.getJSON("http://localhost:8000/predictions/stub", function (data) {
           const predictions = data.predictions;
 
           let html = `
-            <table class="table table-striped table-bordered">
-              <thead class="table-dark">
+            <table class="custom-table">
+              <thead>
                 <tr>
                   <th>Stock Name</th>
                   <th>Ticker</th>
