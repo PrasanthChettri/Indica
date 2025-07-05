@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stock Predictions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="bg-light">
+
+  <div class="container my-4">
+    <h2 class="text-center mb-4">Indian Stock Predictions</h2>
+
+    <div class="text-center mb-4">
+      <button id="fetchBtn" class="btn btn-primary">Fetch Predictions</button>
+    </div>
+
+    <div id="predictionTableContainer"></div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $('#fetchBtn').click(function () {
+        $('#fetchBtn').prop('disabled', true).text("Loading...");
+
+        $.getJSON("http://localhost:8000/predictions", function (data) {
+          const predictions = data.predictions;
+
+          let html = `
+            <table class="table table-striped table-bordered">
+              <thead class="table-dark">
+                <tr>
+                  <th>Stock Name</th>
+                  <th>Ticker</th>
+                  <th>Prediction</th>
+                  <th>News Impact</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+
+          predictions.forEach(p => {
+            const predictionHTML = marked.parse(p.prediction || '');
+            const newsHTML = marked.parse(p.news_impact || '');
+
+            html += `
+              <tr>
+                <td>${p.stock_name}</td>
+                <td>${p.ticker}</td>
+                <td>
+                  <details>
+                    <summary>Show</summary>
+                    <div class="mt-2">${predictionHTML}</div>
+                  </details>
+                </td>
+                <td>
+                  <details>
+                    <summary>Show</summary>
+                    <div class="mt-2">${newsHTML}</div>
+                  </details>
+                </td>
+              </tr>
+            `;
+          });
+
+          html += "</tbody></table>";
+          $('#predictionTableContainer').html(html);
+        }).fail(function () {
+          $('#predictionTableContainer').html('<div class="alert alert-danger">Failed to fetch predictions.</div>');
+        }).always(function () {
+          $('#fetchBtn').prop('disabled', false).text("Fetch Predictions");
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

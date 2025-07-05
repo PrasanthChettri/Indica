@@ -1,0 +1,22 @@
+fastapi
+uvicorn[standard]
+langchain-community
+openai
+anthropic
+httpx
+python-dotenv
+pinecone-client
+google-genai
+langchain-google-genai
+google-generativeai
+growwapi
+yfinance
+langchain
+prettytable
+pandas_ta
+numpy <=1.26.3
+praw
+requests
+selenium
+beautifulsoup4
+pdfplumber
