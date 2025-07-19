@@ -10,10 +10,10 @@ from langchain_google_genai import GoogleGenerativeAI
 from dotenv import load_dotenv
 import prompts
 from dotenv import load_dotenv, find_dotenv
+from services.arequest import ARequest
+
 load_dotenv(find_dotenv())
-
 import os
-
 
 llm = GoogleGenerativeAI(model="models/gemini-2.5-flash-lite-preview-06-17", temperature=0.8)
 api_key = os.getenv("INDIA_NEWS_API_KEY")
@@ -89,6 +89,19 @@ def format_table_as_csv(table: List[List[str]]):
         return "Empty table"
     return "\n".join(map(lambda x: ",".join(x), table))
 
+
+async def extract_announcement_data(announcement):
+    item = dict(announcement)  # shallow copy
+    pdf_blob = await get_pdf_blob(item.get('link', None))
+    if pdf_blob:
+        extracted_data = await extract_pdf_text(pdf_blob)
+        if extracted_data:
+            print(f"Extracted text from PDF: {extracted_data['text'][:200]}...")  # Print first 200 chars
+            print(f"Found {len(extracted_data['tables'])} tables in PDF")
+            item['pdf_content'] = extracted_data['text']
+            item['tables'] = extracted_data['tables']
+    return item
+
 async def get_announcements(stock_name):
     stock_name = stock_name.upper().split(".")[0]
     response = requests.get(
@@ -101,15 +114,7 @@ async def get_announcements(stock_name):
         }
     )
     announcement_data = response.json()
-    for i in announcement_data:
-        pdf_blob = await get_pdf_blob(i.get('link', None))
-        if pdf_blob:
-            extracted_data = await extract_pdf_text(pdf_blob)
-            if extracted_data:
-                print(f"Extracted text from PDF: {extracted_data['text'][:200]}...")  # Print first 200 chars
-                print(f"Found {len(extracted_data['tables'])} tables in PDF")
-                i['pdf_content'] = extracted_data['text']
-                i['tables'] = extracted_data['tables']
+    announcement_data = await asyncio.gather(*[extract_announcement_data(i) for i in announcement_data])
     parsed_data = ""
     for title, link, date, pdf_content, table in map(lambda x: x.values(), announcement_data) :
         parsed_data += f"""Article Title: {title}

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Indica - Stock Predictions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link href="/styles" rel="stylesheet">
+</head>
+<body class="bg-white">
+
+  <div class="container my-4" style="max-width: 95%;">
+    <h1 class="text-center mb-1 fw-bold fst-italic" style="font-family: 'Noto Sans', sans-serif; font-size: 3rem;">Indica </i></h1>
+
+    <hr class="mx-auto" style="width: 200px; border: 1px solid #2c3e50; opacity: 0.3;">
+    <p class="text-center project-subtitle text-body-secondary" style="font-size: 1.2rem; font-weight: 400;">
+      AI-Powered Indian Stock Market Analysis
+    </p>
+
+    <div class="container text-center my-5">
+      <div id="inputGroup">
+        <template id="input-template">
+          <div class="row justify-content-center mb-3 input-row ">
+            <input type="text" class="col rounded-pill-input" placeholder="enter stock name">
+            <input type="text" class="col  rounded-pill-input" placeholder="enter stock ticker">
+            <div class="col-auto">
+              <button type="button" class="btn removeInput rounded-pill">&times;</button>
+            </div>
+          </div>
+        </template>
+
+        <div class="row justify-content-center mb-3 input-row">
+          <input type="text" class="col rounded-pill-input" placeholder="enter stock name">
+          <input type="text" class="col rounded-pill-input" placeholder="enter stock ticker">
+          <div class="col-auto">
+            <button type="button" class="btn removeInput rounded-pill">&times;</button>
+          </div>
+        </div>
+      </div>
+      <button id="addInput" class="btn custom-add-btn rounded-pill">+</button>
+    </div>
+
+    <div class="text-center mb-4">
+    <button id="fetchBtn" class="btn rounded-pill" style="border: 2px solid black; color: black; background-color: white;">
+    Fetch Predictions
+    </button>
+    </div>
+  
+
+    <div id="predictionTableContainer"></div>
+  </div>
+
+  <template id="card-template">
+    <div class="stock-card mb-4 p-3 rounded shadow-sm" style="background: #fff;">
+      <h2 class="stock-title mb-3"></h2>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <details>
+            <summary class="fw-bold">Analysis (Prediction)</summary>
+            <div class="mt-2 prediction-content"></div>
+          </details>
+        </div>
+        <div class="col-md-6">
+          <details>
+            <summary class="fw-bold">News Impact</summary>
+            <div class="mt-2 news-content"></div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script src="/js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const addInputBtn = byId('addInput');
+    const inputGroup = byId('inputGroup');
+    const fetchBtn = byId('fetchBtn');
+    const predictionTableContainer = byId('predictionTableContainer');
+    const inputTemplate = byId('input-template');
+    const cardTemplate = byId('card-template');
+
+    // Add new input row
+    addInputBtn.addEventListener('click', () => {
+      const cloneNode = clone(inputTemplate.content);
+      inputGroup.appendChild(cloneNode);
+    });
+
+    // Remove input row (event delegation)
+    inputGroup.addEventListener('click', e => {
+      if (e.target.matches('.removeInput')) {
+        const row = e.target.closest('.input-row');
+        row && row.remove();
+      }
+    });
+
+    // Collect form data
+    function getInputGroupData() {
+      const rows = all('.input-row', inputGroup);
+      return Array.from(rows).map(row => {
+        const inputs = all('input', row);
+        return {
+          name: inputs[0].value.trim(),
+          ticker: inputs[1].value.trim()
+        };
+      });
+    }
+
+    // Fetch predictions
+    fetchBtn.addEventListener('click', () => {
+      fetchBtn.disabled = true;
+      fetchBtn.textContent = 'Loading...';
+
+      const inputData = getInputGroupData().filter(d => d.name || d.ticker);
+
+      // Clear previous cards
+      predictionTableContainer.innerHTML = '';
+
+      // Create card elements for each stock
+      const cardElems = inputData.map(({ name, ticker }) => {
+        const cardClone = clone(cardTemplate.content);
+        const card = one('.stock-card', cardClone);
+        one('.stock-title', card).textContent = `${name} (${ticker})`;
+        one('.prediction-content', card).textContent = 'Loading…';
+        one('.news-content', card).textContent = '';
+        predictionTableContainer.appendChild(card);
+        return card;
+      });
+
+      // Fetch and fill each card
+      const fetchPromises = inputData.map(({ name, ticker }, idx) => {
+        return fetcher('http://localhost:8000/prediction', { name, ticker })
+          .then(({ response, error }) => {
+            const card = cardElems[idx];
+            if (error) {
+              console.error(`Fetch failed for card ${idx}:`, error);
+              one('.prediction-content', card).textContent = 'Error loading prediction';
+              one('.news-content', card).textContent = '';
+              return;
+            }
+            one('.prediction-content', card).innerHTML = marked.parse(response.prediction || '');
+            one('.news-content', card).innerHTML = marked.parse(response.news_impact || '');
+          });
+      });
+
+      // Optionally, remove input UI after fetch
+      Promise.all(fetchPromises).then(() => {
+        inputGroup.remove();
+        fetchBtn.remove();
+        addInputBtn.remove();
+      });
+    });
+  });
+  </script>
+</body>
+</html>

@@ -4,24 +4,14 @@ from ohvc import get_stock_analysis
 import prompts
 load_dotenv(find_dotenv())
 
-import os
-import yfinance as yf
-import pprint
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
-from prettytable import PrettyTable
 from fastapi import FastAPI
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
-import requests
-import json
-import pandas as pd
 from news import get_announcements
 from gemini import Gemini
-from stubs import get_stub_predictions, get_stub_error_response, get_stub_loading_response
+from stubs import get_stub_predictions
 import time
 
 # Load the model (Gemini via LangChain)
@@ -67,22 +57,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# List of Indian stocks with their NSE tickers
-stocks = {
-    "Tata Motors": "TATAMOTORS.NS"
-}
+@app.get("/prediction")
+async def get_predictions(name: str, ticker: str):
+    return await predict_stock(name, ticker)
 
 
-@app.get("/predictions")
-async def get_predictions():
-    tasks = [predict_stock(name, ticker) for name, ticker in stocks.items()]
-    results = await asyncio.gather(*tasks)
-    
-    return JSONResponse(content={
-        "predictions": results 
-    })
-
-@app.get("/predictions/stub")
+@app.get("/prediction/stub")
 async def get_predictions_stub():
     """
     Stub API endpoint for testing predictions without requiring AI models or external APIs.
@@ -94,7 +74,21 @@ async def get_predictions_stub():
 
 @app.get("/")
 async def get_index():
-    return FileResponse("templates/index.html")
+    return FileResponse("frontend/index.html")
+
+@app.get("/styles")
+async def get_css():
+    return FileResponse("frontend/styles.css")
+
+@app.get("/js")
+async def get_js():
+    FRONT_END_JS_FILES = ["frontend/fetcher.js", "frontend/utils.js"]
+    js_content = ""
+    for file in FRONT_END_JS_FILES :
+        fb = open(file)
+        js_content += fb.read() + "\n"
+        fb.close() 
+    return Response(content=js_content, media_type="application/javascript")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

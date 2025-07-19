@@ -149,6 +149,7 @@ def get_stock_analysis(ticker: str) -> Dict[str, str]:
         "broad_market_indicators": get_broad_market_indicators(),
         "fundamental_indicators": get_stock_fundamental_indicators(ticker)
     }
+
 if __name__ == "__main__":
     s =  get_stock_fundamental_indicators("RELIANCE.NS")
     print(s)

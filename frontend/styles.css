@@ -1,0 +1,38 @@
+#inputGroup {
+    width: 50%;
+    margin-left: 27.18%;
+    margin-right: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.input-row {
+    display: flex;
+    gap: 20px;
+}
+/* RemoveInput (x) button styles */
+.removeInput {
+    background: none;
+    font-size: large;
+    font-weight: bolder;
+    border: none !important;
+    box-shadow: none !important;
+    transition: color 0.2s;
+}
+.removeInput:hover, .removeInput:focus {
+    color: #dc3545 !important; /* red */
+}
+/* AddInput (+) button styles */
+.custom-add-btn {
+    background: none;
+    font-size: large;
+    font-weight: bolder;
+    margin-left:-20px !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: color 0.2s;
+}
+.custom-add-btn:hover, .custom-add-btn:focus {
+    color: #0d6efd !important; /* blue */
+}
