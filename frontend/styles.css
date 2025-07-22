@@ -36,3 +36,27 @@
 .custom-add-btn:hover, .custom-add-btn:focus {
     color: #0d6efd !important; /* blue */
 }
+.stock-card {
+  background: #fff;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+}
+.stock-title {
+  margin-bottom: 0.25rem;
+}
+.stock-ticker {
+  font-size: 1.3rem;
+  color: #6c757d;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+.card-section-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+.card-divider {
+  margin: 1.5rem 0;
+  opacity: 0.5;
+}

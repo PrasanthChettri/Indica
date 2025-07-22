@@ -54,22 +54,18 @@
   </div>
 
   <template id="card-template">
-    <div class="stock-card mb-4 p-3 rounded shadow-sm" style="background: #fff;">
-      <h2 class="stock-title mb-3"></h2>
-      <div class="row g-3">
-        <div class="col-md-6">
-          <details>
-            <summary class="fw-bold">Analysis (Prediction)</summary>
-            <div class="mt-2 prediction-content"></div>
-          </details>
-        </div>
-        <div class="col-md-6">
-          <details>
-            <summary class="fw-bold">News Impact</summary>
-            <div class="mt-2 news-content"></div>
-          </details>
-        </div>
-      </div>
+    <div class="stock-card">
+      <h2 class="stock-title mb-1"></h2>
+      <div class="stock-ticker"></div>
+      <details class="mb-3">
+        <summary class="card-section-title">Analysis (Prediction)</summary>
+        <div class="mt-2 prediction-content"></div>
+      </details>
+      <hr class="card-divider">
+      <details>
+        <summary class="card-section-title">News Impact</summary>
+        <div class="mt-2 news-content"></div>
+      </details>
     </div>
   </template>
 
@@ -123,7 +119,8 @@
       const cardElems = inputData.map(({ name, ticker }) => {
         const cardClone = clone(cardTemplate.content);
         const card = one('.stock-card', cardClone);
-        one('.stock-title', card).textContent = `${name} (${ticker})`;
+        one('.stock-title', card).textContent = name;
+        one('.stock-ticker', card).textContent = ticker;
         one('.prediction-content', card).textContent = 'Loading…';
         one('.news-content', card).textContent = '';
         predictionTableContainer.appendChild(card);
