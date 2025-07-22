@@ -1,7 +1,7 @@
 INDICA - AI-POWERED INDIAN STOCK MARKET ANALYSIS SYSTEM
 ========================================================
 
-![Webapp Screenshot](assets/APP_SCREENSHOT.png)
+![Webapp Screenshot](assets/APP_STATE_3.png)
 
 PROJECT OVERVIEW
 ----------------
@@ -62,3 +62,9 @@ TECHNICAL HIGHLIGHTS
 • Built RESTful API with FastAPI for frontend integration
 • Integrated multiple data sources with error handling
 • Implemented asynchronous processing for concurrent analysis
+
+TODO
+--------------------
+1. Implement Data Scrapers for different news sources (macro/micro finance news)
+2. Incorporate RAGs 
+3. Add chat/deep research functionality
